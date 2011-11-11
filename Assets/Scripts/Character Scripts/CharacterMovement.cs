@@ -21,17 +21,16 @@ public class CharacterMovement : MonoBehaviour
 
     private bool leftKeyPressed = false;
     private bool rightKeyPressed = false;
-	
-	private float leftAcceleration = 0.0f;
-	private float rightAcceleration = 0.0f;
-	private float jumpAcceleration = 0.0f;
 
 	private SpriteAnimation spriteAnimation;
+	
+	private GameObject door;
 	void Start ()
 	{
 		spriteAnimation = GetComponent<SpriteAnimation>();
 		if (spriteAnimation == null)
 			throw new UnityException("SpriteAnimation Exception - failed to find SpriteAnimation attached to " + gameObject.name + "."); // This should NEVER arise, but just in case...
+		door = null; // just to be sure that this will work
 	}
     // Handle user input here.
 	void Update ()
@@ -71,46 +70,21 @@ public class CharacterMovement : MonoBehaviour
     // Handle physical interactions here
     void FixedUpdate ()
 	{
-		Vector3 movement = Vector3.zero;
-        if (spriteAnimation.GetState() == SpriteAnimation.State.Moving)
-        {
-            if (leftKeyPressed)
-			{
-				                rigidbody.AddForce( Vector3.left * leftMovementSpeed, ForceMode.VelocityChange);
-//				movement.x -= leftMovementSpeed * Time.fixedDeltaTime * (canJump ? 1.0f : airControlModifier);
-				//GetComponent<CharacterController>().Move(Vector3.left * leftMovementSpeed * Time.fixedDeltaTime * (canJump ? 1.0f : airControlModifier));
-			}
-                //rigidbody.velocity += Vector3.left * leftMovementSpeed * Time.fixedDeltaTime * (canJump ? 1.0f : airControlModifier);
-            if (rightKeyPressed)
-			{
-				rigidbody.AddForce( Vector3.right * rightMovementSpeed, ForceMode.VelocityChange);
-				//movement.x += rightMovementSpeed * Time.fixedDeltaTime * (canJump ? 1.0f : airControlModifier);
-				//GetComponent<CharacterController>().Move(Vector3.right * rightMovementSpeed * Time.fixedDeltaTime * (canJump ? 1.0f : 
-			}
-                //rigidbody.velocity += Vector3.right * rightMovementSpeed * Time.fixedDeltaTime * ( canJump ? 1.0f : airControlModifier );
-        }
-
-        if (canJump && allowJump)
-        {
-            allowJump = false;
-//			movement.y = (jumpForce) * Time.fixedDeltaTime;
-//            rigidbody.velocity += (rigidbody.velocity + Vector3.up).normalized * jumpForce * (rightKeyPressed || leftKeyPressed ? airControlModifier : 1.0f);
-			rigidbody.AddForce((rigidbody.velocity + Vector3.up).normalized * jumpForce * (rightKeyPressed || leftKeyPressed ? airControlModifier : 1.0f), ForceMode.VelocityChange);
-        }
-		
-		//movement.y += Physics.gravity.y/4.0f * Time.deltaTime;
-		
-		//GetComponent<CharacterController>().Move(movement);
-		
-		if (spriteAnimation.GetState() == SpriteAnimation.State.Idle)
+		if (door == null)
 		{
-		//	if (rigidbody.velocity.magnitude > 0.1f)
-		//	{
-		//		Vector3 remainingVelocity = Vector3.zero - rigidbody.velocity;
-		//		remainingVelocity *= stoppingSpeed * Time.fixedDeltaTime;
-			
-		//		rigidbody.velocity += remainingVelocity;
-		//	}
+	        if (spriteAnimation.GetState() == SpriteAnimation.State.Moving)
+	        {
+	            if (leftKeyPressed)
+					                rigidbody.AddForce( Vector3.left * leftMovementSpeed, ForceMode.VelocityChange);
+	            if (rightKeyPressed)
+					rigidbody.AddForce( Vector3.right * rightMovementSpeed, ForceMode.VelocityChange);
+	        }
+	
+	        if (canJump && allowJump)
+	        {
+	            allowJump = false;
+				rigidbody.AddForce((rigidbody.velocity + Vector3.up).normalized * jumpForce * (rightKeyPressed || leftKeyPressed ? airControlModifier : 1.0f), ForceMode.VelocityChange);
+	        }
 		}
     }
 
@@ -119,4 +93,9 @@ public class CharacterMovement : MonoBehaviour
         if (data.side == CharacterSide.Floor)
             canJump = data.status;
     }
+	
+	public void ExitAnimation(GameObject to_door)
+	{
+		door = to_door;
+	}
 }

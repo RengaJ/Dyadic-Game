@@ -1,3 +1,4 @@
+using UnityEditor;
 using UnityEngine;
 using System.Collections;
 
@@ -115,10 +116,13 @@ public class MagneticDevice : CharacterDevice
 				if (Physics.Raycast (ray, out information) && !hit_object)
 				{
 					GameObject collided = information.collider.gameObject;
-					if (collided.GetComponent<MetallicObject>() != null)
+					if (Mathf.Abs(Vector3.Distance(collided.transform.position, transform.position)) <= effectiveRange)
 					{
-						collided.GetComponent<MetallicObject>().charge(currentMode);
-						hit_object = true;
+						if (collided.GetComponent<MetallicObject>() != null)
+						{
+							collided.GetComponent<MetallicObject>().charge(currentMode);
+							hit_object = true;
+						}
 					}
 				}
 			}
@@ -181,4 +185,10 @@ public class MagneticDevice : CharacterDevice
     {
         return selectedMode;
     }
+	
+	public void OnDrawGizmos()
+	{
+		Gizmos.color = Color.green;
+		Gizmos.DrawWireSphere(transform.position, effectiveRange);
+	}
 }
