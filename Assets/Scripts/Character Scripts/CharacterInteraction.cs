@@ -20,6 +20,9 @@ public class CharacterInteraction : MonoBehaviour
 
     public void Die ()
     {
-        Debug.Log( "Dead" );
+        if (name.Contains("Nyx"))
+			GameManager.PlayerDied(1);
+		else if (name.Contains("Helios"))
+			GameManager.PlayerDied(0);
     }
 }

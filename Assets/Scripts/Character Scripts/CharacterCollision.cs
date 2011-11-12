@@ -28,11 +28,8 @@ public class CharacterCollision : MonoBehaviour
             data.status = ( side == CharacterSide.Floor );
             SendMessageUpwards( "UpdateStatus" , data );
         }
-        if (tags.HasTag( "Lethal" ))
-        {
-            if (side == CharacterSide.Floor || side == CharacterSide.Head)
-                SendMessageUpwards( "Die" , null);
-        }
+		if (tags.HasTag( "Lethal" ))
+			SendMessageUpwards( "Die" , null);
     }
     public void OnTriggerExit ( Collider other )
     {

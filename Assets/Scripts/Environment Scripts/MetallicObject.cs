@@ -13,8 +13,6 @@ public class MetallicObject : MonoBehaviour
 	public bool moves = true;
 	public bool springsBack = true;
 	
-	public MetallicObject other_object;
-	
 	public MetallicObject[] other_objects;
 	
 	public GameObject positive_particles;
@@ -33,8 +31,6 @@ public class MetallicObject : MonoBehaviour
 	// Use this for initialization
 	void Start()
 	{
-		if (other_object == null)
-			throw new UnityException("MetallicObject Exception: Another object reference is required!");
 		if (other_objects.Length == 0)
 			throw new UnityException("MetallicObject Exception: At least one object reference is required in other_objects");
 		if (moveDistanceLimits.Length != other_objects.Length)
@@ -49,34 +45,6 @@ public class MetallicObject : MonoBehaviour
 		Debug.DrawRay(transform.position,Vector3.up*10,Color.green);
 		Debug.DrawRay(transform.position,Vector3.right*10,Color.red);
 		Debug.DrawRay(transform.position,Vector3.forward*10,Color.blue);
-/*		if (moves)
-		{
-			if (charged && other_object.isCharged() && sameChargeType())
-			{
-				if (move_distance_limit >= 0.0f && Mathf.Abs(Vector3.Distance(original_position, transform.position)) < move_distance_limit)
-				{
-					Vector3 direction = (other_object.transform.position - transform.position).normalized;
-					if (this.direction != Direction.BOTH)
-					{
-						if (this.direction == Direction.VERTICAL) Utility.Mul(direction, Vector3.up, out direction);
-						if (this.direction == Direction.HORIZONTAL) Utility.Mul(direction, Vector3.right, out direction);
-					}
-					if (charge_type == 1) // attract
-						transform.position = Vector3.Lerp(transform.position, transform.position + direction, Time.deltaTime * move_speed);
-					else if (charge_type == -1) // repel
-						transform.position = Vector3.Lerp(transform.position, transform.position - direction, Time.deltaTime * move_speed);
-				}
-			}
-			if (springsBack && (!charged || !other_object.isCharged()) && charge_type != 0)
-			{
-				if (transform.position != original_position)
-					transform.position = Vector3.Lerp(transform.position, original_position, Time.deltaTime * move_speed);
-				else
-					charge_type = 0;
-			}
-		} */
-		
-		
 		if (moves)
 		{
 			int[] indices = GetCharged();
@@ -168,11 +136,6 @@ public class MetallicObject : MonoBehaviour
 				particles = null;
 			}
 		}
-	}
-	
-	public bool sameChargeType()
-	{
-		return charge_type == other_object.get_charge_type();
 	}
 	
 	private int get_charge_type()

@@ -6,17 +6,20 @@ using System.Collections;
 public class MagneticDevice : CharacterDevice
 {
     public enum GunMode { Repel , Attract , Grab }
-    public GunMode currentMode = GunMode.Grab; // Grab onto an object and move gun to move object
-    private GunMode selectedMode = GunMode.Attract; // Will switch between Attract And Repel modes
-	
+    public static GunMode currentMode = GunMode.Grab; // Grab onto an object and move gun to move object
+    private static GunMode selectedMode = GunMode.Attract; // Will switch between Attract And Repel modes
 	private bool hit_object = false;
-	
     public float effectiveRange = 10.0f;
-
     private Vector2 previousPosition;
-
     private MetalBlock affectedBlock;
-
+	private GameObject visorObject;
+	private LineRenderer line;
+	
+	private GameObject renderedLine;
+	
+	private Object[] grab_textures;
+	private int grab_index = 0;
+	
     public Ray[] GetConeRays ()
     {
         Ray[] rays = new Ray[rayCount];
@@ -32,6 +35,19 @@ public class MagneticDevice : CharacterDevice
 
 	void Start ()
     {
+		if (cameraScreen == null)
+			cameraScreen = GameObject.Find("Main Camera").GetComponent<Camera>();
+		if (visorObject == null)
+			visorObject = GameObject.Find("Visor");
+		renderedLine = new GameObject("Magnetic Device Line");
+		renderedLine.transform.parent = transform;
+		line = renderedLine.AddComponent<LineRenderer>();
+		line.SetVertexCount(2);
+		line.SetPosition(0, visorObject.transform.position);
+		line.SetWidth(0.0f, 1.0f);
+		line.enabled = false;
+		
+		grab_textures = Resources.LoadAll("Magnetic",typeof(Texture2D));
 	}
 
     public Utility.MouseDirection CheckMouseDirection ()
@@ -97,6 +113,11 @@ public class MagneticDevice : CharacterDevice
                                 {
                                     block.Unlock();
                                     affectedBlock = block;
+									transform.parent.gameObject.GetComponent<CharacterMovement>().enabled = false;
+									line.SetPosition(1,information.point);
+									line.enabled = true;
+									line.material = (Material)Resources.Load("Materials/MagneticGrabMaterial");
+									line.material.mainTexture = (Texture2D)grab_textures[grab_index];
                                 }
                             }
                         }
@@ -104,8 +125,10 @@ public class MagneticDevice : CharacterDevice
                 }
 				else
 	            {
+					grab_index = (grab_index + 1) % 4;
 	                Utility.MouseDirection direction = CheckMouseDirection();
 	                affectedBlock.Move(direction);
+					line.material.mainTexture = (Texture2D)grab_textures[grab_index];
 	            }
             }
 			else // GunMode == GunMode.Attract or GunMode.Repel
@@ -116,7 +139,7 @@ public class MagneticDevice : CharacterDevice
 				if (Physics.Raycast (ray, out information) && !hit_object)
 				{
 					GameObject collided = information.collider.gameObject;
-					if (Mathf.Abs(Vector3.Distance(collided.transform.position, transform.position)) <= effectiveRange)
+					if (Mathf.Abs(Vector3.Distance(collided.GetComponent<MeshCollider>().ClosestPointOnBounds(visorObject.transform.position), transform.position)) <= effectiveRange)
 					{
 						if (collided.GetComponent<MetallicObject>() != null)
 						{
@@ -146,6 +169,7 @@ public class MagneticDevice : CharacterDevice
             {
                 affectedBlock.Lock();
                 affectedBlock = null;
+				transform.parent.gameObject.GetComponent<CharacterMovement>().enabled = true;
             }
         }
 
@@ -163,6 +187,7 @@ public class MagneticDevice : CharacterDevice
             {
                 affectedBlock.Lock();
                 affectedBlock = null;
+				line.enabled = false;
             }
         }
 
@@ -176,12 +201,12 @@ public class MagneticDevice : CharacterDevice
         }
     }
 
-    public GunMode GetCurrentGunMode ()
+    public static GunMode GetCurrentGunMode ()
     {
         return currentMode;
     }
 
-    public GunMode GetSelectedGunMode ()
+    public static GunMode GetSelectedGunMode ()
     {
         return selectedMode;
     }

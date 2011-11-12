@@ -2,7 +2,7 @@ using UnityEditor;
 using UnityEngine;
 using System.Collections;
 
-public class UnityEditorExtensions : MonoBehaviour
+public class UnityEditorExtensions
 {
     [MenuItem( "GameObject/Create Empty With MultipleTags %#M" )]
     public static void CreateMultipleTagGameObject ()

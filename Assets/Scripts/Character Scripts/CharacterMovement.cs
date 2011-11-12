@@ -6,6 +6,7 @@ using System.Collections;
 [RequireComponent(typeof(SpriteAnimation))]
 public class CharacterMovement : MonoBehaviour
 {
+	public bool usingController = false;
 	public KeyCode leftMovementKey;
 	public KeyCode rightMovementKey;
 	public KeyCode jumpKey;
@@ -36,7 +37,7 @@ public class CharacterMovement : MonoBehaviour
 	void Update ()
 	{
         airControlModifier = Mathf.Clamp( airControlModifier , 0.01f , 1.0f );
-        if (Input.GetKeyDown( jumpKey ))
+        if ((!usingController && Input.GetKeyDown( jumpKey )) || usingController)
             allowJump = true;
 		if (Input.GetKey(leftMovementKey))
 		{
