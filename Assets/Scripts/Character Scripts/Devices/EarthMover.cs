@@ -2,11 +2,11 @@ using UnityEngine;
 using System.Collections;
 
 public class EarthMover : MonoBehaviour {
-	public KeyCode leftMovementKey;
+/*	public KeyCode leftMovementKey;
 	public KeyCode rightMovementKey;
 	public KeyCode upMovementKey;
-	public KeyCode downMovementKey;
-	public KeyCode activateKey;
+	public KeyCode downMovementKey; */
+/*	public KeyCode activateKey; */
 	
 	public float movementSpeed = 1.0f;
 	public float stoppingSpeed = 1.0f;
@@ -26,6 +26,49 @@ public class EarthMover : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		float joystick_vertical = Input.GetAxis("Right_Joystick_Vertical");
+		float joystick_horizontal = Input.GetAxis("Right_Joystick_Horizontal");
+		
+		Debug.Log("(" + joystick_horizontal + ", " + joystick_vertical + ")");
+		
+		if (joystick_vertical == -1)
+		{
+			up = true;
+			down = false;
+		}
+		else if (joystick_vertical == 1)
+		{
+			down = true;
+			up = false;
+		}
+		else
+		{
+			down = false;
+			up = false;
+		}
+		
+		if (joystick_horizontal == 1) // right
+		{
+			right = true;
+			left = false;
+		}
+		else if (joystick_horizontal == -1) // lefty
+		{
+			left = true;
+			right = false;
+		}
+		else
+		{
+			left = false;
+			right = false;
+		}
+		
+		if (Input.GetButtonDown("Controller_Activate_Cursor"))	
+		{
+			if (em != null)
+				em.Activate();
+		}
+		/*
 		if (Input.GetKeyDown(activateKey))
 		{
 			Debug.Log("ACTIVATE");
@@ -66,7 +109,7 @@ public class EarthMover : MonoBehaviour {
 		{
 			up = false;
 			down = false;
-		}	
+		}	*/
 	}
 	
 	void FixedUpdate () {
@@ -74,23 +117,23 @@ public class EarthMover : MonoBehaviour {
 		{
 			if(up)
 			{
-				rigidbody.AddForce( Vector3.up * movementSpeed * Time.fixedDeltaTime);
+				rigidbody.AddForce( Vector3.up * movementSpeed * Time.fixedDeltaTime, ForceMode.VelocityChange);
 			}
 			else if(down)
 			{
-				rigidbody.AddForce( Vector3.down * movementSpeed * Time.fixedDeltaTime);
+				rigidbody.AddForce( Vector3.down * movementSpeed * Time.fixedDeltaTime, ForceMode.VelocityChange);
 			}
 			
 			if(left)
 			{
-				rigidbody.AddForce( Vector3.left * movementSpeed * Time.fixedDeltaTime);
+				rigidbody.AddForce( Vector3.left * movementSpeed * Time.fixedDeltaTime, ForceMode.VelocityChange);
 			}
 			else if(right)
 			{
-				rigidbody.AddForce( Vector3.right * movementSpeed * Time.fixedDeltaTime);
+				rigidbody.AddForce( Vector3.right * movementSpeed * Time.fixedDeltaTime, ForceMode.VelocityChange);
 			}
 		}
-		else
+		/*else
 		{
 			if (rigidbody.velocity.magnitude > 0.1f)
 			{
@@ -99,7 +142,7 @@ public class EarthMover : MonoBehaviour {
 			
 				rigidbody.velocity += remainingVelocity;
 			}
-		}
+		} */
 	}
 	
 	public void SetEarth (EarthMovement e) {

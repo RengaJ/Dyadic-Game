@@ -37,36 +37,77 @@ public class CharacterMovement : MonoBehaviour
 	void Update ()
 	{
         airControlModifier = Mathf.Clamp( airControlModifier , 0.01f , 1.0f );
-        if ((!usingController && Input.GetKeyDown( jumpKey )) || usingController)
-            allowJump = true;
-		if (Input.GetKey(leftMovementKey))
+		if (!usingController)
 		{
-			if (spriteAnimation.GetState() != SpriteAnimation.State.Moving)
-				spriteAnimation.MakeMoving();
-            if (spriteAnimation.GetDirection() != SpriteAnimation.Direction.Left)
-                spriteAnimation.MakeLeftDirection();
-            if (!leftKeyPressed)
-                leftKeyPressed = true;
+	        if (Input.GetKeyDown( jumpKey ))
+	            allowJump = true;
+			if (Input.GetKey(leftMovementKey))
+			{
+				if (spriteAnimation.GetState() != SpriteAnimation.State.Moving)
+					spriteAnimation.MakeMoving();
+	            if (spriteAnimation.GetDirection() != SpriteAnimation.Direction.Left)
+	                spriteAnimation.MakeLeftDirection();
+	            if (!leftKeyPressed)
+	                leftKeyPressed = true;
+			}
+	        else if (Input.GetKey( rightMovementKey ))
+	        {
+	            if (spriteAnimation.GetState() != SpriteAnimation.State.Moving)
+	                spriteAnimation.MakeMoving();
+	            if (spriteAnimation.GetDirection() != SpriteAnimation.Direction.Right)
+	                spriteAnimation.MakeRightDirection();
+	            if (!rightKeyPressed)
+	                rightKeyPressed = true;
+	        }
+	        else
+	        {
+	            if (spriteAnimation.GetState() != SpriteAnimation.State.Idle)
+	                spriteAnimation.MakeIdle();
+	        }
+	
+	        if (Input.GetKeyUp(leftMovementKey))
+	            leftKeyPressed = false;
+	        if (Input.GetKeyUp(rightMovementKey))
+	            rightKeyPressed = false;
 		}
-        else if (Input.GetKey( rightMovementKey ))
-        {
-            if (spriteAnimation.GetState() != SpriteAnimation.State.Moving)
-                spriteAnimation.MakeMoving();
-            if (spriteAnimation.GetDirection() != SpriteAnimation.Direction.Right)
-                spriteAnimation.MakeRightDirection();
-            if (!rightKeyPressed)
-                rightKeyPressed = true;
-        }
-        else
-        {
-            if (spriteAnimation.GetState() != SpriteAnimation.State.Idle)
-                spriteAnimation.MakeIdle();
-        }
-
-        if (Input.GetKeyUp(leftMovementKey))
-            leftKeyPressed = false;
-        if (Input.GetKeyUp(rightMovementKey))
-            rightKeyPressed = false;
+		else
+		{
+			if (Input.GetButtonDown("Controller_Jump"))
+			{
+				Debug.Log("JUMP!");
+				allowJump = true;
+			}
+			float axis_value = Input.GetAxis("Left_Joystick_Horizontal");
+			axis_value = Mathf.Clamp(axis_value, -1.0f, 1.0f);
+			if (axis_value == 1.0f) // RIGHT
+			{
+	            if (spriteAnimation.GetState() != SpriteAnimation.State.Moving)
+	                spriteAnimation.MakeMoving();
+	            if (spriteAnimation.GetDirection() != SpriteAnimation.Direction.Right)
+	                spriteAnimation.MakeRightDirection();
+	            if (!rightKeyPressed)
+	                rightKeyPressed = true;
+			}
+			
+			else if (axis_value == -1.0f) // LEFT
+			{
+				if (spriteAnimation.GetState() != SpriteAnimation.State.Moving)
+					spriteAnimation.MakeMoving();
+	            if (spriteAnimation.GetDirection() != SpriteAnimation.Direction.Left)
+	                spriteAnimation.MakeLeftDirection();
+	            if (!leftKeyPressed)
+	                leftKeyPressed = true;
+			}
+	        else
+	        {
+	            if (spriteAnimation.GetState() != SpriteAnimation.State.Idle)
+	                spriteAnimation.MakeIdle();
+				if (leftKeyPressed)
+					leftKeyPressed = false;
+				if (rightKeyPressed)
+					rightKeyPressed = false;
+	        }
+		}
 	}
     // Handle physical interactions here
     void FixedUpdate ()

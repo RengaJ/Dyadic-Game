@@ -13,7 +13,7 @@ public class EarthMovement : MonoBehaviour {
 	public float movementSpeed = 1.0f;
 	public float stoppingSpeed = 1.0f;
 	
-	public bool active;
+	public bool isActive;
 	
 	private bool left = false;
 	private bool right = false;
@@ -24,9 +24,45 @@ public class EarthMovement : MonoBehaviour {
 	}
 	
 	void Update () {
-		if(active)
+		if(isActive)
 		{
-			if (Input.GetKey(leftMovementKey))
+			float joystick_vertical = Input.GetAxis("Right_Joystick_Vertical");
+			float joystick_horizontal = Input.GetAxis("Right_Joystick_Horizontal");
+			
+//			Debug.Log("(" + joystick_horizontal + ", " + joystick_vertical + ")");
+			
+			if (joystick_vertical == -1)
+			{
+				up = true;
+				down = false;
+			}
+			else if (joystick_vertical == 1)
+			{
+				down = true;
+				up = false;
+			}
+			else
+			{
+				down = false;
+				up = false;
+			}
+			
+			if (joystick_horizontal == 1) // right
+			{
+				right = true;
+				left = false;
+			}
+			else if (joystick_horizontal == -1) // lefty
+			{
+				left = true;
+				right = false;
+			}
+			else
+			{
+				left = false;
+				right = false;
+			}
+			/*if (Input.GetKey(leftMovementKey))
 			{
 				left = true;
 				right = false;
@@ -56,25 +92,25 @@ public class EarthMovement : MonoBehaviour {
 			{
 				up = false;
 				down = false;
-			}
+			} */
 		}
 	}
 	
 	public void Activate(){
-		if(active)
+		if(isActive)
 		{
 			this.rigidbody.useGravity = true;
-			active = false;
+			isActive = false;
 		}
 		else
 		{
 			this.rigidbody.useGravity = false;
-			active = true;
+			isActive = true;
 		}
 	}
 	
 	public void DeActivate(){
-		active = false;
+		isActive = false;
 		this.rigidbody.useGravity = true;
 	}
 	
