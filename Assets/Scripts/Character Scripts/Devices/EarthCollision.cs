@@ -28,7 +28,7 @@ public class EarthCollision : MonoBehaviour {
 		EarthMover mv = co.gameObject.GetComponent<EarthMover>();
 		if(mv != null)
 		{
-			mv.SetEarth(em);
+			mv.SetEarth(null);
 		}
 	}
 }

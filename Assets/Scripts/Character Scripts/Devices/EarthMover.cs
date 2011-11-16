@@ -68,7 +68,16 @@ public class EarthMover : MonoBehaviour {
 		{
 			Debug.Log("pressed");
 			if (em != null)
+			{
 				em.Activate();
+				
+				for (int i = 0; i < transform.GetChildCount(); i++)
+				{
+					GameObject child = transform.GetChild(i).gameObject;
+					if (child.GetComponent<ParticleEmitter>() != null)
+						child.GetComponent<ParticleEmitter>().emit = em.isActive;
+				}
+			}
 		}
 		
 		if (em != null && em.isActive)
@@ -77,7 +86,7 @@ public class EarthMover : MonoBehaviour {
 			
 			Debug.Log(rotateValue);
 			
-			if (rotateValue == 1 || rotateValue == -1)
+			if (rotateValue != 0)
 				em.gameObject.transform.Rotate(Vector3.forward, rotateValue * rotSpeed * Time.deltaTime, Space.Self);
 		}
 		/*
