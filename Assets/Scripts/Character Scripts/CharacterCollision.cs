@@ -44,7 +44,8 @@ public class CharacterCollision : MonoBehaviour
     public void OnTriggerStay ( Collider other )
     {
         MultipleTags tags = other.collider.GetComponent<MultipleTags>();
-        if (tags.HasTag( "Wall" ))
+
+		if (tags.HasTag( "Wall" ))
         {
             data.status = ( side == CharacterSide.Floor || side == CharacterSide.Head );
             SendMessageUpwards( "UpdateStatus" , data );

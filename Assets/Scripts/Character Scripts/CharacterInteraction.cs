@@ -11,6 +11,8 @@ public class CharacterInteraction : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
+		if (name.Contains("Nyx") && Input.GetButtonDown("Controller_Activate_Cursor"))
+			GetComponent<CharacterMovement>().enabled = !(GetComponent<CharacterMovement>().enabled);
 	}
 
     public void UpdateStatus ( CharacterCollisionData data )

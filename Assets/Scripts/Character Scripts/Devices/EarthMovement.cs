@@ -29,8 +29,6 @@ public class EarthMovement : MonoBehaviour {
 			float joystick_vertical = Input.GetAxis("Right_Joystick_Vertical");
 			float joystick_horizontal = Input.GetAxis("Right_Joystick_Horizontal");
 			
-//			Debug.Log("(" + joystick_horizontal + ", " + joystick_vertical + ")");
-			
 			if (joystick_vertical == -1)
 			{
 				up = true;
@@ -119,23 +117,23 @@ public class EarthMovement : MonoBehaviour {
 		{
 			if(up)
 			{
-				rigidbody.AddForce( Vector3.up * movementSpeed * Time.fixedDeltaTime);
+				rigidbody.AddForce( Vector3.up * movementSpeed * Time.fixedDeltaTime, ForceMode.VelocityChange);
 			}
 			else if(down)
 			{
-				rigidbody.AddForce( Vector3.down * movementSpeed * Time.fixedDeltaTime);
+				rigidbody.AddForce( Vector3.down * movementSpeed * Time.fixedDeltaTime, ForceMode.VelocityChange);
 			}
 			
 			if(left)
 			{
-				rigidbody.AddForce( Vector3.left * movementSpeed * Time.fixedDeltaTime);
+				rigidbody.AddForce( Vector3.left * movementSpeed * Time.fixedDeltaTime, ForceMode.VelocityChange);
 			}
 			else if(right)
 			{
-				rigidbody.AddForce( Vector3.right * movementSpeed * Time.fixedDeltaTime);
+				rigidbody.AddForce( Vector3.right * movementSpeed * Time.fixedDeltaTime, ForceMode.VelocityChange);
 			}
 		}
-		else
+/*		else
 		{
 			if (rigidbody.velocity.magnitude > 0.1f)
 			{
@@ -144,6 +142,6 @@ public class EarthMovement : MonoBehaviour {
 			
 				rigidbody.velocity += remainingVelocity;
 			}
-		}
+		} */
 	}
 }

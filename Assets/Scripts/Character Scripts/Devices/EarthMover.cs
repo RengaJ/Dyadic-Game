@@ -13,6 +13,8 @@ public class EarthMover : MonoBehaviour {
 	
 	public EarthMovement em;
 	
+	public float rotSpeed = 5.0f;
+	
 	private bool left = false;
 	private bool right = false;
 	private bool up = false;
@@ -29,7 +31,6 @@ public class EarthMover : MonoBehaviour {
 		float joystick_vertical = Input.GetAxis("Right_Joystick_Vertical");
 		float joystick_horizontal = Input.GetAxis("Right_Joystick_Horizontal");
 		
-		Debug.Log("(" + joystick_horizontal + ", " + joystick_vertical + ")");
 		
 		if (joystick_vertical == -1)
 		{
@@ -65,8 +66,19 @@ public class EarthMover : MonoBehaviour {
 		
 		if (Input.GetButtonDown("Controller_Activate_Cursor"))	
 		{
+			Debug.Log("pressed");
 			if (em != null)
 				em.Activate();
+		}
+		
+		if (em != null && em.isActive)
+		{
+			float rotateValue = Input.GetAxis("Controller_Rotate_Object");
+			
+			Debug.Log(rotateValue);
+			
+			if (rotateValue == 1 || rotateValue == -1)
+				em.gameObject.transform.Rotate(Vector3.forward, rotateValue * rotSpeed * Time.deltaTime, Space.Self);
 		}
 		/*
 		if (Input.GetKeyDown(activateKey))
