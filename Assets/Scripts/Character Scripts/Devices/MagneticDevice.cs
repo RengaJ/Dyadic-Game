@@ -115,6 +115,7 @@ public class MagneticDevice : CharacterDevice
                                     affectedBlock = block;
 									transform.parent.gameObject.GetComponent<CharacterMovement>().enabled = false;
 									line.SetPosition(1,information.point);
+									renderedLine.SetActiveRecursively(true);
 									line.enabled = true;
 									line.material = (Material)Resources.Load("Materials/MagneticGrabMaterial");
 									line.material.mainTexture = (Texture2D)grab_textures[grab_index];
@@ -139,14 +140,19 @@ public class MagneticDevice : CharacterDevice
 				if (Physics.Raycast (ray, out information) && !hit_object)
 				{
 					GameObject collided = information.collider.gameObject;
-					if (Mathf.Abs(Vector3.Distance(collided.GetComponent<MeshCollider>().ClosestPointOnBounds(visorObject.transform.position), transform.position)) <= effectiveRange)
+					if (collided.GetComponent<MetallicObject>() != null)
+					{
+						collided.GetComponent<MetallicObject>().charge(currentMode);
+						hit_object = true;
+					}
+/*					if (Mathf.Abs(Vector3.Distance(collided.GetComponent<MeshCollider>().ClosestPointOnBounds(visorObject.transform.position), transform.position)) <= effectiveRange)
 					{
 						if (collided.GetComponent<MetallicObject>() != null)
 						{
 							collided.GetComponent<MetallicObject>().charge(currentMode);
 							hit_object = true;
 						}
-					}
+					}*/
 				}
 			}
         }
@@ -188,6 +194,7 @@ public class MagneticDevice : CharacterDevice
                 affectedBlock.Lock();
                 affectedBlock = null;
 				line.enabled = false;
+				renderedLine.SetActiveRecursively(false);
             }
         }
 

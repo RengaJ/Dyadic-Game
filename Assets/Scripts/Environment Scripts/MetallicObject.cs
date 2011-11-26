@@ -28,6 +28,9 @@ public class MetallicObject : MonoBehaviour
 	
 	private int charge_type;
 	
+	public AudioClip sound;
+	private AudioSource source;
+	
 	// Use this for initialization
 	void Start()
 	{
@@ -37,6 +40,13 @@ public class MetallicObject : MonoBehaviour
 			throw new UnityException("MetallicObject Exception: The number of move limits must be equal to the number of objects in other_objects");
 		original_position = gameObject.transform.position;
 		charge_type = 0;
+		if (sound == null)
+			sound = (AudioClip)Resources.LoadAssetAtPath("Assets/Media/PolarityChange",typeof(AudioClip));
+		GameObject audioSource = new GameObject("Audio Source");
+		audioSource.transform.parent = GameObject.Find("Main Camera").transform;
+		audioSource.transform.localPosition = Vector3.zero;
+		
+		source = audioSource.AddComponent<AudioSource>();
 	}
 	
 	// Update is called once per frame
@@ -98,6 +108,7 @@ public class MetallicObject : MonoBehaviour
 					particles = (GameObject)Instantiate(positive_particles);
 					particles.transform.parent = gameObject.transform;
 					particles.transform.localPosition = Vector3.zero;
+					source.PlayOneShot(sound);
 				}
 			}
 			else
@@ -118,6 +129,7 @@ public class MetallicObject : MonoBehaviour
 					particles = (GameObject)Instantiate(negative_particles);
 					particles.transform.parent = gameObject.transform;
 					particles.transform.localPosition = Vector3.zero;
+					source.PlayOneShot(sound);
 				}
 			}
 			else
