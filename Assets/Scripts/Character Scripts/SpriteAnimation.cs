@@ -4,8 +4,11 @@ using System.Collections;
 [AddComponentMenu("Dyadic/2D Character/Sprite Animation")]
 public class SpriteAnimation : MonoBehaviour
 {
+	public enum Mode { Standard, Special };
 	public enum State { Moving, Jumping, Idle, Action };
 	public enum Direction { Left, Right };
+	
+	public bool useSpecialMode = false;
 	private int currentRightIdleFrame = 0;
 	private int currentLeftIdleFrame = 0;
 	//private int currentJumpFrame = 0;
@@ -15,6 +18,7 @@ public class SpriteAnimation : MonoBehaviour
 	// Internal direction and state inforamtion
 	private Direction currentDirection = Direction.Right;
 	private State currentState = State.Idle;
+	private Mode currentMode = Mode.Standard;
 	
 	// Left Idle animation timing values
 	public float RightIdleLoopTime = 1.0f;
@@ -37,8 +41,12 @@ public class SpriteAnimation : MonoBehaviour
 	public Texture2D[] leftIdleAnimation;
 	public Texture2D[] leftMoveAnimation;
 	public Texture2D[] rightMoveAnimation;
-	//public Texture2D[] jumpAnimation;
-	// Use this for initialization
+	
+	public Texture2D[] specialRightIdleAnimation;
+	public Texture2D[] specialLeftIdleAnimation;
+	public Texture2D[] specialLeftMoveAnimation;
+	public Texture2D[] specialRightMoveAnimation;
+	
 	void Start ()
 	{
 		if (rightIdleAnimation.Length > 0)
@@ -62,6 +70,18 @@ public class SpriteAnimation : MonoBehaviour
 		else
 			throw new UnityException("Animation Exception - Right Move Animation must contain at least one frame of animation.");
 		
+		if (useSpecialMode)
+		{
+			if (specialRightIdleAnimation.Length != rightIdleAnimation.Length)
+				throw new UnityException("Animation Exception - Special Right Idle Animation must have the same number of frames as Right Idle Animation.");
+			if (specialLeftIdleAnimation.Length != leftIdleAnimation.Length)
+				throw new UnityException("Animation Exception - Special Left Idle Animation must have the same number of frames as Left Idle Animation.");
+			if (specialLeftMoveAnimation.Length != leftMoveAnimation.Length)
+				throw new UnityException("Animation Exception - Special Left Move Animation must have the same number of frames as Left Move Animation.");
+			if (specialRightMoveAnimation.Length != rightMoveAnimation.Length)
+				throw new UnityException("Animation Exception - Special Right Move Animation must have the same number of frames as Right Move Animation.");
+		}
+		
 		ResetTimes();
 	}
 	
@@ -81,9 +101,19 @@ public class SpriteAnimation : MonoBehaviour
 				if (leftMoveAnimation.Length == 1)
 				{
 					Texture2D mainTexture =  (Texture2D)GetComponent<MeshRenderer>().material.mainTexture;
-					if (mainTexture == leftMoveAnimation[0])
+					if (currentMode == Mode.Standard)
+					{
+						if (mainTexture == leftMoveAnimation[0])
+							return;
+						GetComponent<MeshRenderer>().material.mainTexture = leftMoveAnimation[0];
 						return;
-					GetComponent<MeshRenderer>().material.mainTexture = leftMoveAnimation[0];
+					}
+					if (currentMode == Mode.Special)
+					{
+						if (mainTexture == specialLeftMoveAnimation[0])
+							return;
+						GetComponent<MeshRenderer>().material.mainTexture = specialLeftMoveAnimation[0];
+					}
 				}
 				else
 					{
