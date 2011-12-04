@@ -15,8 +15,8 @@ public class EarthCollision : MonoBehaviour {
 	
 	}
 	
-	void OnTriggerEnter(Collider co){
-		Debug.Log("ENTER:"+co.gameObject.name);
+	void OnTriggerEnter(Collider co)
+	{
 		EarthMover mv = co.gameObject.GetComponent<EarthMover>();
 		if(mv != null)
 		{
@@ -24,7 +24,8 @@ public class EarthCollision : MonoBehaviour {
 		}
 	}
 	
-	void OnTriggerExit(Collider co){
+	void OnTriggerExit(Collider co)
+	{
 		EarthMover mv = co.gameObject.GetComponent<EarthMover>();
 		if(mv != null)
 		{

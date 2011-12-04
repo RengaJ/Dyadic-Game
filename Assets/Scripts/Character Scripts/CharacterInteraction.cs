@@ -17,7 +17,6 @@ public class CharacterInteraction : MonoBehaviour
 
     public void UpdateStatus ( CharacterCollisionData data )
     {
-        Debug.Log( data.side + "      " + data.status );
     }
 
     public void Die ()

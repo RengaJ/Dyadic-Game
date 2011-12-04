@@ -66,7 +66,6 @@ public class EarthMover : MonoBehaviour {
 		
 		if (Input.GetButtonDown("Controller_Activate_Cursor"))	
 		{
-			Debug.Log("pressed");
 			if (em != null)
 			{
 				em.Activate();
@@ -84,53 +83,10 @@ public class EarthMover : MonoBehaviour {
 		{
 			float rotateValue = Input.GetAxis("Controller_Rotate_Object");
 			
-			Debug.Log(rotateValue);
 			
 			if (rotateValue != 0)
 				em.gameObject.transform.Rotate(Vector3.forward, rotateValue * rotSpeed * Time.deltaTime, Space.Self);
 		}
-		/*
-		if (Input.GetKeyDown(activateKey))
-		{
-			Debug.Log("ACTIVATE");
-			if(em != null)
-			{
-				em.Activate();
-				Debug.Log("ACTIVATED");
-			}
-		}
-		
-		if (Input.GetKey(leftMovementKey))
-		{
-			left = true;
-			right = false;
-		}
-		else if (Input.GetKey(rightMovementKey))
-		{
-			right = true;
-			left = false;
-		}
-		else
-		{
-			right = false;
-			left = false;
-		}
-		
-		if (Input.GetKey(downMovementKey))
-		{
-			down = true;
-			up = false;
-		}
-		else if (Input.GetKey(upMovementKey))
-		{
-			up = true;
-			down = false;
-		}
-		else
-		{
-			up = false;
-			down = false;
-		}	*/
 	}
 	
 	void FixedUpdate () {
@@ -154,23 +110,12 @@ public class EarthMover : MonoBehaviour {
 				rigidbody.AddForce( Vector3.right * movementSpeed * Time.fixedDeltaTime, ForceMode.VelocityChange);
 			}
 		}
-		/*else
-		{
-			if (rigidbody.velocity.magnitude > 0.1f)
-			{
-				Vector3 remainingVelocity = Vector3.zero - rigidbody.velocity;
-				remainingVelocity *= stoppingSpeed * Time.fixedDeltaTime;
-			
-				rigidbody.velocity += remainingVelocity;
-			}
-		} */
 	}
 	
-	public void SetEarth (EarthMovement e) {
+	public void SetEarth (EarthMovement e)
+	{
 		if(em != null)
-		{
 			em.DeActivate();
-		}
 		em = e;
 	}
 }

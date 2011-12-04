@@ -43,7 +43,7 @@ public class CharacterDevice : MonoBehaviour
             Quaternion target = Quaternion.LookRotation(-mouseDirection.normalized);
             gunObject.transform.rotation = Quaternion.Slerp( gunObject.transform.rotation, target, 10.0f*Time.deltaTime );
         }
-        Debug.DrawLine(transform.position, mousePos, Color.red);
+        //Debug.DrawLine(transform.position, mousePos, Color.red);
         float angleOffset = Vector3.Angle(mouseDirection, transform.forward);
         angleDivisions = angle/(float)(rayCount-1);
         halfAngle = angle * 0.5f;

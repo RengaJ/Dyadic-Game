@@ -35,12 +35,11 @@ public class GameManager : MonoBehaviour
 	public void Start()
 	{
 		maxLevels = Mathf.Clamp(maxLevels, 2, int.MaxValue);
-		LoadLevel(0);
+		LoadLevel(4);
 	}
 	
 	private static void LoadLevel(int level)
 	{
-		Debug.Log("LoadLevel " + level);
 		if (nyx != null)
 			GameObject.DestroyObject(nyx);
 		if (helios != null)

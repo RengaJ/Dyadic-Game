@@ -74,7 +74,6 @@ public class CharacterMovement : MonoBehaviour
 		{
 			if (Input.GetButtonDown("Controller_Jump"))
 			{
-				Debug.Log("JUMP!");
 				allowJump = true;
 			}
 			float axis_value = Input.GetAxis("Left_Joystick_Horizontal");
