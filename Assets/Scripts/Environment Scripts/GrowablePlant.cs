@@ -15,7 +15,7 @@ public class GrowablePlant: MonoBehaviour
 	void Start () 
 	{
 			startPosition = transform.position;
-		if(fullyGrown = true)
+		if(fullyGrown == true)
 		{
 			growing = true;
 			doBehavior();
