@@ -4,13 +4,21 @@ using System.Collections;
 [AddComponentMenu("Dyadic/Game Manager")]
 public class GameManager : MonoBehaviour
 {
-	public static int maxLevels = 2;
-	private static int levelNumber = 0;
+	public static int maxLevels = 6;
+	private static int levelNumber = -1;
 	private static GameObject currentLevel;
 	private static AsyncOperation loading = null;
 	
 	public GameObject nyx_player;
 	public GameObject helios_player;
+	
+	private bool waitForInput = false;
+	
+	public Texture2D fadeTexture;
+	public Texture2D fogTexture;
+	
+	private bool pressedA = false;
+	private bool pressedSpace = false;
 	
 	private GameObject heliosSpawn;
 	private GameObject nyxSpawn;
@@ -18,6 +26,7 @@ public class GameManager : MonoBehaviour
 	private static GameObject nyx;
 	private static GameObject helios;
 	
+	private bool readyToLoad = false;
 	public static bool statusChecked = true;
 	
 	private static bool helios_fadeout = false;
@@ -32,18 +41,38 @@ public class GameManager : MonoBehaviour
 	private float helios_alpha = 1.0f;
 	private float nyx_alpha = 1.0f;
 	
+	private float alpha = 0.0f;
+	
+	private bool fadingIn = false;
+	private bool fadingOut = false;
+
+    private Rect notify_A = new Rect( Screen.width/5.4f , Screen.height/1.3f , Screen.width/5.12f , Screen.height/24.0f );
+    private Rect notifySpace = new Rect( Screen.width/1.7f , Screen.height/1.3f , Screen.width/4.5f , Screen.height/24.0f );
+
+	private static JournalEntryList journalEntries;
+	
 	public void Start()
 	{
-		maxLevels = Mathf.Clamp(maxLevels, 2, int.MaxValue);
-		LoadLevel(4);
+		maxLevels = Mathf.Clamp(maxLevels, 6, int.MaxValue);
+		//LoadLevel(0);
+		journalEntries = GetComponent<JournalEntryList>();
+		if (journalEntries == null)
+			throw new UnityException("Game Manager :: Dyadic Exception - The journal entries must exist!");
 	}
 	
 	private static void LoadLevel(int level)
 	{
-		if (nyx != null)
-			GameObject.DestroyObject(nyx);
-		if (helios != null)
-			GameObject.DestroyObject(helios);
+        if (nyx != null)
+        {
+            GameObject.DestroyObject( nyx );
+            nyx = null;
+        }
+        if (helios != null)
+        {
+            GameObject.DestroyObject( helios );
+            helios = null;
+        }
+        GameObject.Destroy( currentLevel ); // We do not want this level anymore, so let's remove it from memory.
 		currentLevel = (GameObject)Instantiate(Resources.Load("Levels/Level" + levelNumber));
 		currentLevel.transform.position = Vector3.zero;
 		loading = Resources.UnloadUnusedAssets();
@@ -61,8 +90,67 @@ public class GameManager : MonoBehaviour
 		return (loading != null ? loading.isDone : false);
 	}
 	
+	public void OnGUI()
+	{
+		if (fadingIn)
+		{
+			if (alpha < 1.0f)
+				alpha = Mathf.Clamp01(alpha + (Time.deltaTime * 0.5f));
+			else
+			{
+				fadingIn = false;
+				readyToLoad = true;
+                waitForInput = true;
+                ShowJournal();
+			}
+		}
+		if (fadingOut)
+		{
+            if (alpha > 0.0f)
+                alpha = Mathf.Clamp01( alpha - ( Time.deltaTime * 0.5f ) );
+            else // RGB value --> Light Green :  ( 0, 153, 18 )
+            {
+                fadingOut = false;
+                pressedA = false;
+                pressedSpace = false;
+            }
+		}
+
+        Color tempColor = GUI.color;
+        GUI.color = new Color( 0 , 0 , 0 , alpha );
+        GUI.DrawTexture( new Rect( 0 , 0 , Screen.width , Screen.height ) , fadeTexture );
+        GUI.color = tempColor;
+
+        journalEntries.Draw();
+
+        if (waitForInput)
+        {
+            if (!pressedA)
+                GUI.Box( notify_A , "Press the (A) button to continue." );
+            else
+                GUI.Box( notify_A , "Waiting for Helios..." );
+
+            if (!pressedSpace)
+                GUI.Box( notifySpace , "Press the [Space] button to continue." );
+            else
+                GUI.Box( notifySpace , "Waiting for Nyx..." );
+
+        }
+
+        GUI.color = new Color( 1 , 1 , 1 , 0.25f );
+		GUI.DrawTexture(new Rect(0,10.0f + (10.0f * Mathf.Sin(Time.time)), Screen.width, Screen.height), fogTexture);
+	}
+	
 	public void Update()
 	{
+        if (Input.GetKeyDown( KeyCode.Return ))
+            fadingIn = true;
+		if (readyToLoad)
+		{
+			readyToLoad = false;
+            statusChecked = true;
+			LoadNextLevel();
+		}
 		if (statusChecked && loading != null && loading.isDone)
 		{
 			statusChecked = false;
@@ -82,6 +170,24 @@ public class GameManager : MonoBehaviour
 					heliosSpawn = spawn;
 				}
 			}
+		}
+		if (waitForInput)
+		{
+            if (!pressedA || !pressedSpace)
+            {
+                if (!pressedA)
+                    //pressedA = Input.GetButtonDown( "Controller_Jump" );
+                    pressedA = Input.GetKeyDown( KeyCode.A );
+                if (!pressedSpace)
+                    pressedSpace = Input.GetKeyDown( KeyCode.Space );
+            }
+            else
+            {
+                waitForInput = false;
+                NextJournal(); // doesn't show the next journal, but just prepares to do so.
+                fadingOut = true;
+            }
+			return;
 		}
 		if (helios_dead)
 		{
@@ -172,5 +278,16 @@ public class GameManager : MonoBehaviour
 			nyx_fadeout = true;
 			nyx.GetComponent<CharacterMovement>().enabled = false;
 		}
+	}
+	
+	public static void ShowJournal()
+	{
+		journalEntries.ShowJournal();
+	}
+	
+	public static void NextJournal()
+	{
+		journalEntries.HideJournal();
+		journalEntries.NextEntry(); // prepare for the next level!
 	}
 }

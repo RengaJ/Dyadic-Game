@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections;
-
+[ExecuteInEditMode]
 public class GrowablePlant: MonoBehaviour 
 {
 	private Vector3 startPosition;
@@ -18,29 +18,35 @@ public class GrowablePlant: MonoBehaviour
 		if(fullyGrown == true)
 		{
 			growing = true;
-			doBehavior();
+		//	doBehavior();
 		}
 	}
-	void OnTriggerEnter(Collider ci)
+	void OnTriggerStay(Collider ci)
 	{
-		if(ci.collider.gameObject.tag == "Natural")
+		if(ci.collider.gameObject.tag == "Natural" && Input.GetButton("Controller_Grow_Button"))
 		{
 			if(fullyGrown == false)
 			{
 				growing = true;
 				withering = false;
-				doBehavior();
+//				doBehavior();
 			}
 			else
 			{
 				growing = false;
 				withering = true;
-				doBehavior();
+//				doBehavior();
 			}
 		}
 	}
+
+    public void Grow ()
+    {
+        growing = true;
+        withering = false;
+    }
 	
-	public void doBehavior()
+	public void Update()
 	{
 		if(growing)
 		{
